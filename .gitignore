@@ -1,3 +1,7 @@
 /.pytest_cache
 /.venv
 /poetry.lock
+/test-docs
+/.vscode
+
+__pycache__
