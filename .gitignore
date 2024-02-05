@@ -3,5 +3,6 @@
 /poetry.lock
 /test-docs
 /.vscode
+/dist
 
 __pycache__
