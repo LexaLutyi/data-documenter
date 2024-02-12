@@ -1,15 +1,16 @@
 import pandas as pd
+import pandera as pa
 import pytest
 import subprocess
 import shutil
 import os
 from time import sleep
+from tests.schemas.annotation import schema
 
 TEST_DOCS_PATH = 'test-docs'
 
 from data_documenter.metadata import (
-    Metadata,
-    DataEntry
+    Metadata
 )
 from data_documenter.metadocs import MetaDocs
 
@@ -25,69 +26,51 @@ def sample_dataframe():
     df = pd.DataFrame(data)
     return df
 
-def test_metadata_instance():
-    meta = Metadata()
+@pytest.fixture
+def sample_schema():
+    return pa.DataFrameSchema(
+        columns = {
+            'Column 1': pa.Column(
+                str, 
+                description="Description with\nmany lines"
+            ),
+            'Column_2': pa.Column(
+                str, 
+                title='Column 2',
+            ),
+        },
+        description='Test pandera schema',
+        name = 'Test'
+    )
+
+def test_metadata_instance(sample_dataframe):
+    schema = pa.infer_schema(sample_dataframe)
+    meta = Metadata(schema)
     assert isinstance(meta, Metadata)
 
-def test_dataentry_instance():
-    entry = DataEntry(
-        name = 'count(1)',
-        eltype = 'number',
-        updated = 546
-    )
-    assert isinstance(entry, DataEntry)
+def test_markdown(sample_schema):
+    expected_md = """# Test
+*Test pandera schema*
 
-def test_metadata_fit(sample_dataframe):
-    # Create a Metadata instance
-    metadata = Metadata()
+## Column 1
+*Description with*  
+*many lines*  
+data type: str  
 
-    # Fit the Metadata instance with the sample DataFrame
-    metadata.fit(sample_dataframe)
-
-    # Check if metadata.items[0] is a DataEntry instance
-    assert isinstance(metadata.items[0], DataEntry)
-    assert isinstance(metadata.items[1], DataEntry)
-
-    # Check the attributes of the DataEntry instance
-    data_entry = metadata.items[0]
-    assert data_entry.name == 'a'
-    assert data_entry.eltype == sample_dataframe['a'].dtype.name
-    assert data_entry.updated == sample_dataframe['a'].count()
-
-    # Check the attributes of the DataEntry instance
-    data_entry = metadata.items[1]
-    assert data_entry.name == 'b'
-    assert data_entry.eltype == sample_dataframe['b'].dtype.name
-    assert data_entry.updated == sample_dataframe['b'].count()
-
-def test_markdown(sample_dataframe):
-    metadata = Metadata(
-        name = 'Test data',
-        description = 'Just some dummy dataset',
-    )
-    metadata.fit(sample_dataframe)
-    expected_md = """# Test data
-Just some dummy dataset
-
-???+ note "a"
-\telement type: float64  
-\tNot nulls: 5  
-
-???+ note "b"
-\telement type: object  
-\tNot nulls: 6  
+## Column 2
+data type: str  
 """
+    metadata = Metadata(sample_schema)
     md = metadata.markdown()
     print(md)
-    assert md.strip() == expected_md.strip()
+    print("----------")
+    print(expected_md)
+    for (a, b) in zip(md.splitlines(), expected_md.splitlines()):
+        assert a == b
 
-def test_makedocs(sample_dataframe):
-    metadata = Metadata(
-        name='Test data',
-        description='Just some dummy dataset',
-    )
-    metadata.fit(sample_dataframe)
-    markdown_content = metadata.markdown()  # Assuming this returns the markdown content
+def test_makedocs():
+    metadata = Metadata(schema)
+    markdown_content = metadata.markdown()
     meta_docs = metadata.make_docs(path=TEST_DOCS_PATH)
 
     assert isinstance(meta_docs, MetaDocs)

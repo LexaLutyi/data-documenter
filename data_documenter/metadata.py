@@ -1,35 +1,50 @@
-import pandas as pd
+import pandera as pa
 import os
 import shutil
 import subprocess
 from .metadocs import MetaDocs
 
-class DataEntry:
-    def __init__(self, name, eltype, updated):
-        self.name = name
-        self.eltype = eltype
-        self.updated = updated
+def wrap_lines(long_text, start, end):
+    long_text = long_text.replace('*', '\\*')
+    return start + (start + end).join(long_text.splitlines()) + end
+
+def title(obj):
+    return obj.title if obj.title else obj.name
+
+def description(obj, indent=0):
+    if obj.description:
+        return wrap_lines(obj.description, '\t' * indent, "  \n")
+    else:
+        return ""
+
+def data_type(column, indent=0):
+    return wrap_lines(f"**data type**: {column.dtype}", '\t' * indent, "  \n")
+
+def user_data(name, value):
+    if value:
+        return wrap_lines(f"**{name}**: {value.strip()}", '', '  \n')
+    else:
+        return ""
 
 class Metadata:
-    def __init__(self, name="", description=""):
-        self.name = name
-        self.description = description
-        self.items = []
-
-    def fit(self, dataframe):
-        for column in dataframe.columns:
-            # Create a DataEntry for each column in the DataFrame
-            name = column
-            eltype = dataframe[column].dtype.name
-            updated = dataframe[column].count()
-            self.items.append(DataEntry(name, eltype, updated))
+    def __init__(self, schema: pa.DataFrameSchema):
+        self.schema: pa.DataFrameSchema = schema
 
     def markdown(self):
-        md = f"# {self.name}\n{self.description}\n\n"
-        for item in self.items:
-            md += f"???+ note \"{item.name}\"\n"
-            md += f"\telement type: {item.eltype}  \n"
-            md += f"\tNot nulls: {item.updated}  \n\n"
+        schema = self.schema
+        md = f"# {title(schema)}\n"
+        md += description(schema)
+        md += "## Columns\n"
+        md += "\n"
+        for name, column in schema.columns.items():
+            md += f"### {title(column)}\n"
+            md += description(column, 0)
+            md += data_type(column, 0)
+            for name, value in column.metadata.items():
+                md += user_data(name, value)
+            md += "\n"
+            md += "---\n"
+            md += "\n"
         return md
 
     def make_docs(self, path):
