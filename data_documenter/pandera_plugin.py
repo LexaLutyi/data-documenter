@@ -4,7 +4,9 @@ from .utils import (
     as_code,
     as_raw
 )
-
+from .metadocs import (
+    MetaDocs
+)
 
 def get_title(x):
     return x.title if x.title else str(x.name)
@@ -75,11 +77,11 @@ def column_to_markdown(
 
 def pandera_to_markdown(
         schema:DataFrameSchema, 
-        file_name='test',
+        # file_name='test',
         title='',
         author=''
     ):
-    md = MdUtils(file_name=file_name, title=title, author=author)
+    md = MdUtils(file_name='', title=title, author=author)
     md.new_header(1, get_title(schema))
     for line in get_description(schema).splitlines():
         md.new_line(line)
@@ -91,11 +93,23 @@ def pandera_to_markdown(
         properties_table.append(name)
         properties_table.append(as_code(value))
     md.new_line()
-    md.new_table(2, len(properties_table) // 2, properties_table)
+    md.new_table(2, len(properties_table) // 2, properties_table, text_align='left')
 
     # Columns
     md.new_header(2, "Columns")
     for name, column in schema.columns.items():
         md.new_paragraph(column_to_markdown(column))
 
+    return md.get_md_text()
+
+def create_documentation(
+        schema: DataFrameSchema, 
+        docs_path: str, 
+        title: str = '', 
+        author:str = ''
+        ):
+    md = MetaDocs(docs_path)
+    md.new()
+    content = pandera_to_markdown(schema, title, author)
+    md.save_markdown(content, 'index.md')
     return md

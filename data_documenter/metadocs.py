@@ -1,11 +1,24 @@
 import subprocess
 import os
 import atexit
+import shutil
 
 class MetaDocs:
     def __init__(self, docs_path):
         self.docs_path = docs_path  # Path to the directory containing mkdocs.yml
         self.server_process = None  # To keep track of the server process
+
+    def new(self):
+        template_path = os.path.join(os.path.dirname(__file__), 'templates', 'mkdocs.yml')
+        yml_path = os.path.join(self.docs_path, "mkdocs.yml")
+        command = ['mkdocs', 'new', self.docs_path]
+        subprocess.run(command)
+        shutil.copyfile(template_path, yml_path)
+
+    def save_markdown(self, markdown: str, filename: str = 'index.md'):
+        filepath = os.path.join(self.docs_path, 'docs', filename)
+        with open(filepath, 'w') as io:
+            io.write(markdown)
 
     def run(self):
         if self.server_process is None:  # Check if server is not already running

@@ -1,5 +1,8 @@
-from data_documenter.pandera_plugin import pandera_to_markdown
+from data_documenter.pandera_plugin import create_documentation
 from tests.schemas.example import schema
+import time
 
-md = pandera_to_markdown(schema, file_name='test-docs/docs/index')
-md.create_md_file()
+md = create_documentation(schema, docs_path='test-docs', title='Test', author='tester')
+md.run()
+
+time.sleep(5)

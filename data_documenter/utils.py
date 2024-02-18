@@ -28,3 +28,6 @@ def as_raw(text):
 
 def as_code(text):
     return f'`{text}`'
+
+def as_is(text):
+    return text
