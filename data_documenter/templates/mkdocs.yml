@@ -1,11 +1,20 @@
-site_name: Dataset Docs
+site_name: Crossref Monitoring
 theme:
   name: material
+  icon:
+    annotation: material/arrow-right-circle
   features:
     - navigation.tabs
     - navigation.sections
-    - toc.integrate
+    - navigation.prune 
     - navigation.top
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.instant.preview
+    - navigation.tracking
+    - navigation.path
+    # - toc.integrate
     - search.suggest
     - search.highlight
     - content.tabs.link
@@ -33,7 +42,9 @@ extra:
     - icon: fontawesome/brands/telegram
       link: https://t.me/LehaLut
     - icon: fontawesome/brands/github-alt
-      link: https://github.com/LexaLutyi
+      link: https://github.com/LexaLutyi/data-documenter
+    - icon: fontawesome/solid/envelope
+      link: mailto:samarin_aleksei@icloud.com
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -41,24 +52,31 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - admonition
+  - tables
   - pymdownx.arithmatex:
       generic: true
   - footnotes
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.mark
   - attr_list
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - md_in_html
+
 
 
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
-  - javascripts/tablesort.js
+  # - javascripts/tablesort.js
 
-extra_css:
-  - stylesheets/extra.css
+# extra_css:
+#   - stylesheets/extra.css
 
 plugins:
   - search
@@ -68,4 +86,4 @@ plugins:
 #   - scripts/hooks.py
 
 copyright: |
-  &copy; 2023 <a href="https://github.com/LexaLutyi"  target="_blank" rel="noopener">Aleksei Samarin</a>
+  &copy; 2024 <a href="https://github.com/LexaLutyi/data-documenter"  target="_blank" rel="noopener">Aleksei Samarin</a>
