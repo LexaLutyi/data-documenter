@@ -106,10 +106,10 @@ def create_documentation(
         schema: DataFrameSchema, 
         docs_path: str, 
         title: str = '', 
-        author:str = ''
+        filename: str = 'index.md'
         ):
     md = MetaDocs(docs_path)
     md.new()
-    content = pandera_to_markdown(schema, title, author)
-    md.save_markdown(content, 'index.md')
+    content = pandera_to_markdown(schema, title, '')
+    md.save_markdown(content, filename)
     return md
