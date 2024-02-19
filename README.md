@@ -96,7 +96,7 @@ text_markdown = pandera_to_markdown(schema, title = 'Homepage')
 docs.save_markdown(text_markdown, filename = 'index.md')
 ```
 
-4. See documentation.
+4. See generated documentation.
 ```
 cd my_docs
 mkdocs serve
