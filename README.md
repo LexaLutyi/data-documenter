@@ -50,12 +50,11 @@ docs.run()
 docs.stop()
 ```
 
-!!!
-    It is better to use `mkdocs` command instead of `run`, `stop` for better control of processes. See alternative usage.
-    ```sh
-    cd path/to/folder
-    mkdocs serve
-    ```
+It is better to use `mkdocs` command instead of `run`, `stop` for better control of processes. See alternative usage.
+```sh
+cd path/to/folder
+mkdocs serve
+```
 
 5. Build and deploy documentation  
 See `mkdocs` [documentation](https://squidfunk.github.io/mkdocs-material/getting-started/).
