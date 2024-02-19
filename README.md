@@ -57,7 +57,7 @@ docs.stop()
     mkdocs serve
     ```
 
-5. Build and deploy documentation
+5. Build and deploy documentation  
 See `mkdocs` [documentation](https://squidfunk.github.io/mkdocs-material/getting-started/).
 
 ## Alternative usage
@@ -83,5 +83,5 @@ cd my_docs
 mkdocs serve
 ```
 
-4. Build and deploy
+4. Build and deploy  
 See `mkdocs` [documentation](https://squidfunk.github.io/mkdocs-material/getting-started/).
